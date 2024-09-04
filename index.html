@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stopwatch</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #74ebd5, #ACB6E5);
+            margin: 0;
+        }
+
+        .stopwatch {
+            text-align: center;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        #display {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        button {
+            font-size: 1rem;
+            margin: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        #start {
+            background-color: #28a745;
+            color: white;
+        }
+
+        #start:hover {
+            background-color: #218838;
+        }
+
+        #stop {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        #stop:hover {
+            background-color: #c82333;
+        }
+
+        #reset {
+            background-color: #ffc107;
+            color: white;
+        }
+
+        #reset:hover {
+            background-color: #e0a800;
+        }
+
+        #lap {
+            background-color: #17a2b8;
+            color: white;
+        }
+
+        #lap:hover {
+            background-color: #138496;
+        }
+
+        #laps {
+            margin-top: 20px;
+            list-style: none;
+            padding: 0;
+        }
+
+        #laps li {
+            background: #f8f9fa;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+            font-size: 1.2rem;
+            color: #495057;
+        }
+    </style>
+</head>
+<body>
+    <div class="stopwatch">
+        <div id="display">00:00:00</div>
+        <button id="start">Start</button>
+        <button id="stop">Stop</button>
+        <button id="reset">Reset</button>
+        <button id="lap">Lap</button>
+        <ul id="laps"></ul>
+    </div>
+    <script>
+        let timer;
+        let running = false;
+        let startTime;
+        let elapsedTime = 0;
+        let lapTime = 0;
+
+        const display = document.getElementById('display');
+        const laps = document.getElementById('laps');
+
+        function startStopwatch() {
+            if (!running) {
+                running = true;
+                startTime = Date.now() - elapsedTime;
+                timer = setInterval(updateDisplay, 100);
+            }
+        }
+
+        function stopStopwatch() {
+            if (running) {
+                running = false;
+                clearInterval(timer);
+                elapsedTime = Date.now() - startTime;
+            }
+        }
+
+        function resetStopwatch() {
+            running = false;
+            clearInterval(timer);
+            elapsedTime = 0;
+            lapTime = 0;
+            display.textContent = '00:00:00';
+            laps.innerHTML = '';
+        }
+
+        function lapStopwatch() {
+            if (running) {
+                const lapItem = document.createElement('li');
+                lapItem.textContent = formatTime(elapsedTime);
+                laps.appendChild(lapItem);
+            }
+        }
+
+        function updateDisplay() {
+            elapsedTime = Date.now() - startTime;
+            display.textContent = formatTime(elapsedTime);
+        }
+
+        function formatTime(time) {
+            const milliseconds = Math.floor(time % 1000 / 100);
+            const seconds = Math.floor(time / 1000) % 60;
+            const minutes = Math.floor(time / 60000) % 60;
+            return `${pad(minutes)}:${pad(seconds)}:${milliseconds}`;
+        }
+
+        function pad(number) {
+            return number.toString().padStart(2, '0');
+        }
+
+        document.getElementById('start').addEventListener('click', startStopwatch);
+        document.getElementById('stop').addEventListener('click', stopStopwatch);
+        document.getElementById('reset').addEventListener('click', resetStopwatch);
+        document.getElementById('lap').addEventListener('click', lapStopwatch);
+    </script>
+</body>
+</html>
